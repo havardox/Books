@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
                 holder.setTitle(model.getTitle());
                 holder.setAuthor(model.getAuthor());
-                holder.setPrice(model.getPrice());
+                holder.setPrice("EUR " + model.getPrice());
                 holder.setYear(model.getYear());
 
             }
@@ -91,15 +92,18 @@ public class MainActivity extends AppCompatActivity {
         final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
-            public boolean onQueryTextSubmit(String searchText) {
-                Query firebaseSearchQuery = mDatabase.orderByChild("title").startAt(searchText).endAt(searchText + "\uf8ff");
-                getBooks(firebaseSearchQuery);
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String searchText) {
+                Log.v("Search", searchText);
+                Query firebaseSearchQuery = mDatabase.orderByChild("title").startAt(searchText).endAt(searchText + "\uf8ff");
+                getBooks(firebaseSearchQuery);
                 return false;
             }
         });
